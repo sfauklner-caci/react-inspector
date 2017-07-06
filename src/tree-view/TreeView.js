@@ -40,6 +40,9 @@ class ConnectedTreeNode extends Component {
       type: 'TOGGLE_EXPAND',
       path: path,
     });
+    if (this.props.handleExpand) {
+      this.props.handleExpand(path);
+    }
     this.setState(this.context.store.storeState);
   }
 
@@ -47,7 +50,7 @@ class ConnectedTreeNode extends Component {
     const { dataIterator } = this.props;
     const { depth } = this.props;
 
-    const { nodeRenderer } = this.props;
+    const { nodeRenderer, handleExpand } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
@@ -62,6 +65,8 @@ class ConnectedTreeNode extends Component {
           key={key}
           dataIterator={dataIterator}
           nodeRenderer={nodeRenderer}
+          // This should pass down the prop received from the object inspector
+          handleExpand={handleExpand}
           {...props} // props for nodeRenderer
         />,
       );

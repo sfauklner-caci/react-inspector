@@ -109,6 +109,9 @@ class ObjectInspector extends Component {
     /** A known theme or theme object */
     theme: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
+    /** An extra event handler for when the user expands trees */
+    handleExpand: PropTypes.func,
+
     /** Show non-enumerable properties */
     showNonenumerable: PropTypes.bool,
     /** Sort object keys with optional compare function. */

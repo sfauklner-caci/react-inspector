@@ -27,4 +27,13 @@ describe('ObjectInspector', () => {
     expect(tree.props.children.type).toBeA('function');
     expect(tree.props.children.props.nodeRenderer).toEqual(nodeRenderer);
   });
+
+  it('passes `handleExpand` prop to <TreeView/>', () => {
+    // Test that a custom `handleExpand` props is passed to <TreeView/>
+    const handleExpand = () => null;
+    renderer.render(<ObjectInspector handleExpand={handleExpand} />);
+    const tree = renderer.getRenderOutput();
+
+    expect(tree.props.children.props.handleExpand).toEqual(handleExpand);
+  });
 });
