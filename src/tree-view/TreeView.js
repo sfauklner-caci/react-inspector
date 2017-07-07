@@ -41,7 +41,7 @@ class ConnectedTreeNode extends Component {
      * @param prevState
      */
   componentDidUpdate(prevProps, prevState) {
-    const { previouslyExpandedPaths } = prevState;
+    const previouslyExpandedPaths = prevState.expandedPaths;
     const previouslyExpanded = !!previouslyExpandedPaths[prevProps.path];
     const { expandedPaths } = this.state;
     const expanded = !!expandedPaths[this.props.path];
