@@ -35,11 +35,11 @@ class ConnectedTreeNode extends Component {
     );
   }
 
-    /**
-     * React lifecycle method to determine if this component has changed dimensions
-     * @param prevProps
-     * @param prevState
-     */
+  /**
+   * React lifecycle method to determine if this component has changed dimensions
+   * @param prevProps
+   * @param prevState
+   */
   componentDidUpdate(prevProps, prevState) {
     const previouslyExpandedPaths = prevState.expandedPaths;
     const previouslyExpanded = !!previouslyExpandedPaths[prevProps.path];
@@ -47,24 +47,36 @@ class ConnectedTreeNode extends Component {
     const expanded = !!expandedPaths[this.props.path];
     // we changed dimensions
     if (expanded !== previouslyExpanded) {
-      if (this.props.handleExpand)
-        this.props.handleExpand();
+      if (this.props.onToggle)
+        this.props.onToggle();
     }
   }
 
   handleClick(path) {
+    const { expandedPaths } = this.state;
+    const expanded = !!expandedPaths[path];
     this.context.store.storeState = reducer(this.context.store.storeState, {
       type: 'TOGGLE_EXPAND',
       path: path,
     });
     this.setState(this.context.store.storeState);
+
+    // We're in a current expanded state and the user just clicked to collapse us
+    if (expanded && this.props.handleCollapse) {
+      this.props.handleCollapse(path);
+    }
+    // We're in a current collapsed stated and the user just clicked to expand us
+    else if (!expanded && this.props.handleExpand) {
+      this.props.handleExpand(path);
+    }
+
   }
 
   renderChildNodes(parentData, parentPath) {
     const { dataIterator } = this.props;
     const { depth } = this.props;
 
-    const { nodeRenderer, handleExpand } = this.props;
+    const { nodeRenderer, onToggle } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
@@ -80,7 +92,7 @@ class ConnectedTreeNode extends Component {
           dataIterator={dataIterator}
           nodeRenderer={nodeRenderer}
           // This should pass down the prop received from the object inspector
-          handleExpand={handleExpand}
+          onToggle={onToggle}
           {...props} // props for nodeRenderer
         />,
       );
@@ -178,7 +190,7 @@ class TreeView extends Component {
 
   render() {
     const { name, data, dataIterator } = this.props;
-    const { nodeRenderer, handleExpand } = this.props;
+    const { nodeRenderer, handleExpand, handleCollapse, onToggle } = this.props;
 
     const rootPath = DEFAULT_ROOT_PATH;
 
@@ -191,6 +203,8 @@ class TreeView extends Component {
         path={rootPath}
         nodeRenderer={nodeRenderer}
         handleExpand={handleExpand}
+        handleCollapse={handleCollapse}
+        onToggle={onToggle}
       />
     );
   }
@@ -203,6 +217,9 @@ TreeView.propTypes = {
 
   nodeRenderer: PropTypes.func,
 
+  handleExpand: PropTypes.func,
+  handleCollapse: PropTypes.func,
+  onToggle: PropTypes.func
 };
 
 TreeView.defaultProps = {

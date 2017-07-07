@@ -28,6 +28,15 @@ describe('ObjectInspector', () => {
     expect(tree.props.children.props.nodeRenderer).toEqual(nodeRenderer);
   });
 
+  it('passes `handleCollapse` prop to <TreeView/>', () => {
+    // Test that a custom `handleExpand` props is passed to <TreeView/>
+    const handleCollapse = () => null;
+    renderer.render(<ObjectInspector handleCollapse={handleCollapse} />);
+    const tree = renderer.getRenderOutput();
+
+    expect(tree.props.children.props.handleCollapse).toEqual(handleCollapse);
+  });
+
   it('passes `handleExpand` prop to <TreeView/>', () => {
     // Test that a custom `handleExpand` props is passed to <TreeView/>
     const handleExpand = () => null;
@@ -35,5 +44,14 @@ describe('ObjectInspector', () => {
     const tree = renderer.getRenderOutput();
 
     expect(tree.props.children.props.handleExpand).toEqual(handleExpand);
+  });
+
+  it('passes `onToggle` prop to <TreeView/>', () => {
+    // Test that a custom `handleExpand` props is passed to <TreeView/>
+    const onToggle = () => null;
+    renderer.render(<ObjectInspector onToggle={onToggle} />);
+    const tree = renderer.getRenderOutput();
+
+    expect(tree.props.children.props.onToggle).toEqual(onToggle);
   });
 });
