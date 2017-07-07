@@ -5,31 +5,11 @@ import TreeNode from './TreeNode';
 
 import { DEFAULT_ROOT_PATH, hasChildNodes, getExpandedPaths } from './pathUtils';
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'TOGGLE_EXPAND':
-      const path = action.path;
-      const expandedPaths = state.expandedPaths;
-      const expanded = !!expandedPaths[path];
-
-      return Object.assign({}, state, {
-        expandedPaths: Object.assign({}, state.expandedPaths, { [path]: !expanded }),
-      });
-    default:
-      return state;
-  }
-};
-
 class ConnectedTreeNode extends Component {
-  constructor(props, context) {
-    super(props);
 
-    this.state = context.store.storeState;
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     return (
-      !!nextState.expandedPaths[nextProps.path] !== !!this.state.expandedPaths[this.props.path] ||
+      !!nextProps.expandedPaths[nextProps.path] !== !!this.props.expandedPaths[this.props.path] ||
       nextProps.data !== this.props.data ||
       nextProps.name !== this.props.name
     );
@@ -40,10 +20,10 @@ class ConnectedTreeNode extends Component {
    * @param prevProps
    * @param prevState
    */
-  componentDidUpdate(prevProps, prevState) {
-    const previouslyExpandedPaths = prevState.expandedPaths;
+  componentDidUpdate(prevProps) {
+    const previouslyExpandedPaths = prevProps.expandedPaths;
     const previouslyExpanded = !!previouslyExpandedPaths[prevProps.path];
-    const { expandedPaths } = this.state;
+    const { expandedPaths } = this.props;
     const expanded = !!expandedPaths[this.props.path];
     // we changed dimensions
     if (expanded !== previouslyExpanded) {
@@ -53,13 +33,9 @@ class ConnectedTreeNode extends Component {
   }
 
   handleClick(path) {
-    const { expandedPaths } = this.state;
+    const { expandedPaths } = this.props;
     const expanded = !!expandedPaths[path];
-    this.context.store.storeState = reducer(this.context.store.storeState, {
-      type: 'TOGGLE_EXPAND',
-      path: path,
-    });
-    this.setState(this.context.store.storeState);
+
 
     // We're in a current expanded state and the user just clicked to collapse us
     if (expanded && this.props.handleCollapse) {
@@ -76,7 +52,7 @@ class ConnectedTreeNode extends Component {
     const { dataIterator } = this.props;
     const { depth } = this.props;
 
-    const { nodeRenderer, onToggle, handleCollapse, handleExpand } = this.props;
+    const { nodeRenderer, onToggle, handleCollapse, handleExpand, expandedPaths } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
@@ -91,6 +67,7 @@ class ConnectedTreeNode extends Component {
           key={key}
           dataIterator={dataIterator}
           nodeRenderer={nodeRenderer}
+          expandedPaths={expandedPaths}
           // This should pass down the prop received from the object inspector
           onToggle={onToggle}
           handleCollapse={handleCollapse}
@@ -104,10 +81,9 @@ class ConnectedTreeNode extends Component {
   }
 
   render() {
-    const { data, dataIterator, path, depth } = this.props;
+    const { data, dataIterator, path, depth, expandedPaths } = this.props;
 
     const nodeHasChildNodes = hasChildNodes(data, dataIterator);
-    const { expandedPaths } = this.state;
     const expanded = !!expandedPaths[path];
 
     const { nodeRenderer } = this.props;
@@ -155,41 +131,27 @@ class TreeView extends Component {
   constructor(props) {
     super(props);
 
-    this.store = {
-      storeState: {
-        expandedPaths: getExpandedPaths(
-          props.data,
-          props.dataIterator,
-          props.expandPaths,
-          props.expandLevel,
-        ),
-      },
+    this.state = {
+      expandedPaths: getExpandedPaths(
+        props.data,
+        props.dataIterator,
+        props.expandPaths,
+        props.expandLevel
+      )
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.store = {
-      storeState: {
-        expandedPaths: getExpandedPaths(
-          nextProps.data,
-          nextProps.dataIterator,
-          nextProps.expandPaths,
-          nextProps.expandLevel,
-          this.store.storeState.expandedPaths,
-        ),
-      },
-    };
+    this.setState({
+      expandedPaths: getExpandedPaths(
+        nextProps.data,
+        nextProps.dataIterator,
+        nextProps.expandPaths,
+        nextProps.expandLevel,
+        this.state.expandedPaths,
+      )
+    });
   }
-
-  getChildContext() {
-    return {
-      store: this.store,
-    };
-  }
-
-  static childContextTypes = {
-    store: PropTypes.any,
-  };
 
   render() {
     const { name, data, dataIterator } = this.props;
@@ -204,6 +166,7 @@ class TreeView extends Component {
         dataIterator={dataIterator}
         depth={0}
         path={rootPath}
+        expandedPaths={this.state.expandedPaths}
         nodeRenderer={nodeRenderer}
         handleExpand={handleExpand}
         handleCollapse={handleCollapse}
