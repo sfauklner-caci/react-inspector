@@ -36,7 +36,6 @@ class ConnectedTreeNode extends Component {
     const { expandedPaths } = this.props;
     const expanded = !!expandedPaths[path];
 
-
     // We're in a current expanded state and the user just clicked to collapse us
     if (expanded && this.props.handleCollapse) {
       this.props.handleCollapse(path);
@@ -114,12 +113,8 @@ ConnectedTreeNode.propTypes = {
 
   depth: PropTypes.number,
   expanded: PropTypes.bool,
-
+  expandedPaths: PropTypes.array,
   nodeRenderer: PropTypes.func,
-};
-
-ConnectedTreeNode.contextTypes = {
-  store: PropTypes.any,
 };
 
 class TreeView extends Component {
@@ -141,21 +136,20 @@ class TreeView extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      expandedPaths: getExpandedPaths(
-        nextProps.data,
-        nextProps.dataIterator,
-        nextProps.expandPaths,
-        nextProps.expandLevel,
-        this.state.expandedPaths,
-      )
-    });
-  }
 
   render() {
-    const { name, data, dataIterator } = this.props;
-    const { nodeRenderer, handleExpand, handleCollapse, onToggle } = this.props;
+    const {
+      name,
+      data,
+      dataIterator,
+      expandPaths,
+      expandLevel,
+      nodeRenderer,
+      handleExpand,
+      handleCollapse,
+      onToggle } = this.props;
+
+    let expandedPaths = getExpandedPaths(data, dataIterator, expandPaths, expandLevel);
 
     const rootPath = DEFAULT_ROOT_PATH;
 
@@ -166,7 +160,7 @@ class TreeView extends Component {
         dataIterator={dataIterator}
         depth={0}
         path={rootPath}
-        expandedPaths={this.state.expandedPaths}
+        expandedPaths={expandedPaths}
         nodeRenderer={nodeRenderer}
         handleExpand={handleExpand}
         handleCollapse={handleCollapse}
