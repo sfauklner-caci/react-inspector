@@ -42,9 +42,9 @@ class ConnectedTreeNode extends Component {
      */
   componentDidUpdate(prevProps, prevState) {
     const { previouslyExpandedPaths } = prevState;
-    const previouslyExpanded = !!previouslyExpandedPaths[path];
+    const previouslyExpanded = !!previouslyExpandedPaths[prevProps.path];
     const { expandedPaths } = this.state;
-    const expanded = !!expandedPaths[path];
+    const expanded = !!expandedPaths[this.props.path];
     // we changed dimensions
     if (expanded !== previouslyExpanded) {
       if (this.props.handleExpand)
