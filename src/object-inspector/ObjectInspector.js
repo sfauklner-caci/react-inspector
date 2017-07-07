@@ -122,14 +122,14 @@ class ObjectInspector extends Component {
   };
 
   render() {
-    const { showNonenumerable, sortObjectKeys, nodeRenderer, ...rest } = this.props;
+    const { showNonenumerable, sortObjectKeys, nodeRenderer, handleExpand, ...rest } = this.props;
     const dataIterator = createIterator(showNonenumerable, sortObjectKeys);
 
     const renderer = nodeRenderer ? nodeRenderer : defaultNodeRenderer;
 
     return (
       <ThemeProvider theme={this.props.theme}>
-        <TreeView nodeRenderer={renderer} dataIterator={dataIterator} {...rest} />
+        <TreeView nodeRenderer={renderer} handleExpand={handleExpand} dataIterator={dataIterator} {...rest} />
       </ThemeProvider>
     );
   }
