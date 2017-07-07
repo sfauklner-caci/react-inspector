@@ -76,7 +76,7 @@ class ConnectedTreeNode extends Component {
     const { dataIterator } = this.props;
     const { depth } = this.props;
 
-    const { nodeRenderer, onToggle } = this.props;
+    const { nodeRenderer, onToggle, handleCollapse, handleExpand } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
@@ -93,6 +93,9 @@ class ConnectedTreeNode extends Component {
           nodeRenderer={nodeRenderer}
           // This should pass down the prop received from the object inspector
           onToggle={onToggle}
+          handleCollapse={handleCollapse}
+          handleExpand={handleExpand}
+
           {...props} // props for nodeRenderer
         />,
       );
