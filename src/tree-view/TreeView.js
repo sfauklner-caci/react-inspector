@@ -35,14 +35,28 @@ class ConnectedTreeNode extends Component {
     );
   }
 
+    /**
+     * React lifecycle method to determine if this component has changed dimensions
+     * @param prevProps
+     * @param prevState
+     */
+  componentDidUpdate(prevProps, prevState) {
+    const { previouslyExpandedPaths } = prevState;
+    const previouslyExpanded = !!previouslyExpandedPaths[path];
+    const { expandedPaths } = this.state;
+    const expanded = !!expandedPaths[path];
+    // we changed dimensions
+    if (expanded !== previouslyExpanded) {
+      if (this.props.handleExpand)
+        this.props.handleExpand();
+    }
+  }
+
   handleClick(path) {
     this.context.store.storeState = reducer(this.context.store.storeState, {
       type: 'TOGGLE_EXPAND',
       path: path,
     });
-    if (this.props.handleExpand) {
-      this.props.handleExpand(path);
-    }
     this.setState(this.context.store.storeState);
   }
 
