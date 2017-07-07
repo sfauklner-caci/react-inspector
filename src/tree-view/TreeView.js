@@ -8,17 +8,20 @@ import { DEFAULT_ROOT_PATH, hasChildNodes, getExpandedPaths } from './pathUtils'
 class ConnectedTreeNode extends Component {
 
   shouldComponentUpdate(nextProps) {
-    return (
-      !!nextProps.expandedPaths[nextProps.path] !== !!this.props.expandedPaths[this.props.path] ||
-      nextProps.data !== this.props.data ||
-      nextProps.name !== this.props.name
-    );
+    let keys = Object.keys(nextProps.expandedPaths);
+    if (keys.length !== Object.keys(this.props.expandedPaths).length)
+      return true;
+
+    for (let key of keys) {
+      if (!!nextProps[key] !== !!this.props.expandedPaths[key])
+        return true;
+    }
+    return nextProps.data !== this.props.data || nextProps.name !== this.props.name;
   }
 
   /**
    * React lifecycle method to determine if this component has changed dimensions
    * @param prevProps
-   * @param prevState
    */
   componentDidUpdate(prevProps) {
     const previouslyExpandedPaths = prevProps.expandedPaths;
@@ -97,6 +100,7 @@ class ConnectedTreeNode extends Component {
         shouldShowPlaceholder={depth > 0}
         // Render a node from name and data (or possibly other props like isNonenumerable)
         nodeRenderer={nodeRenderer}
+
         {...this.props}
       >
         {// only render if the node is expanded
@@ -113,7 +117,7 @@ ConnectedTreeNode.propTypes = {
 
   depth: PropTypes.number,
   expanded: PropTypes.bool,
-  expandedPaths: PropTypes.array,
+
   nodeRenderer: PropTypes.func,
 };
 
