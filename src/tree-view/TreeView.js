@@ -164,7 +164,7 @@ class TreeView extends Component {
 
   render() {
     const { name, data, dataIterator } = this.props;
-    const { nodeRenderer } = this.props;
+    const { nodeRenderer, handleExpand } = this.props;
 
     const rootPath = DEFAULT_ROOT_PATH;
 
@@ -176,6 +176,7 @@ class TreeView extends Component {
         depth={0}
         path={rootPath}
         nodeRenderer={nodeRenderer}
+        handleExpand={handleExpand}
       />
     );
   }
@@ -187,6 +188,7 @@ TreeView.propTypes = {
   dataIterator: PropTypes.func,
 
   nodeRenderer: PropTypes.func,
+
 };
 
 TreeView.defaultProps = {
