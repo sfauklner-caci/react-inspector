@@ -9,6 +9,10 @@ class ConnectedTreeNode extends Component {
 
   shouldComponentUpdate(nextProps) {
     let keys = Object.keys(nextProps.expandedPaths);
+
+    if (this.props.shouldComponentUpdate && this.props.shouldComponentUpdate(this.props, nextProps))
+      return true;
+
     if (keys.length !== Object.keys(this.props.expandedPaths).length)
       return true;
 
