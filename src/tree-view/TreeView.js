@@ -58,7 +58,7 @@ class ConnectedTreeNode extends Component {
     const { dataIterator } = this.props;
     const { depth } = this.props;
 
-    const { nodeRenderer, onToggle, handleCollapse, handleExpand, expandedPaths } = this.props;
+    const { nodeRenderer, onToggle, handleCollapse, handleExpand, expandedPaths, ...rest } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
@@ -80,6 +80,7 @@ class ConnectedTreeNode extends Component {
           handleExpand={handleExpand}
 
           {...props} // props for nodeRenderer
+          {...rest}
         />,
       );
     }
