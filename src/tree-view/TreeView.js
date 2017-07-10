@@ -169,6 +169,7 @@ class TreeView extends Component {
         handleExpand={handleExpand}
         handleCollapse={handleCollapse}
         onToggle={onToggle}
+        {...this.props}
       />
     );
   }
