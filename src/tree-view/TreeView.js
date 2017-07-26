@@ -70,7 +70,16 @@ class ConnectedTreeNode extends Component {
     const { dataIterator } = this.props;
     const { depth } = this.props;
 
-    const { nodeRenderer, onToggle, handleCollapse, handleExpand, expandedPaths, extraStuff } = this.props;
+    const {
+      nodeRenderer,
+        onToggle,
+        handleCollapse,
+        handleExpand,
+        expandedPaths,
+        extraStuff,
+        shouldComponentUpdate,
+        shouldExpand
+    } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
@@ -92,7 +101,9 @@ class ConnectedTreeNode extends Component {
           handleExpand={handleExpand}
           // Because we can't pass down the rest of ...this.props without causing an infinite loop
           extraStuff={extraStuff}
-
+          shouldExpand={shouldExpand}
+          shouldComponentUpdate={shouldComponentUpdate}
+          
           {...props} // props for nodeRenderer
         />,
       );
