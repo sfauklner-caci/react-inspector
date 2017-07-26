@@ -55,7 +55,9 @@ class ConnectedTreeNode extends Component {
     const { expandedPaths } = this.props;
     const expanded = !!expandedPaths[path];
 
-    this.userClicked = true;
+    if (this.props.handleClick)
+      this.props.handleClick(path);
+
     // We're in a current expanded state and the user just clicked to collapse us
     if (expanded && this.props.handleCollapse) {
       this.props.handleCollapse(path);
@@ -73,6 +75,7 @@ class ConnectedTreeNode extends Component {
     const {
       nodeRenderer,
         onToggle,
+        handleClick,
         handleCollapse,
         handleExpand,
         expandedPaths,
@@ -101,6 +104,7 @@ class ConnectedTreeNode extends Component {
           onToggle={onToggle}
           handleCollapse={handleCollapse}
           handleExpand={handleExpand}
+          handleClick={handleClick}
           // Because we can't pass down the rest of ...this.props without causing an infinite loop
           extraStuff={extraStuff}
           shouldExpand={shouldExpand}
@@ -185,6 +189,7 @@ class TreeView extends Component {
       nodeRenderer,
       handleExpand,
       handleCollapse,
+      handleClick,
       onToggle } = this.props;
 
     let expandedPaths = getExpandedPaths(data, dataIterator, expandPaths, expandLevel);
@@ -204,6 +209,7 @@ class TreeView extends Component {
         nodeRenderer={nodeRenderer}
         handleExpand={handleExpand}
         handleCollapse={handleCollapse}
+        handleClick={handleClick}
         onToggle={onToggle}
         {...this.props}
       />
