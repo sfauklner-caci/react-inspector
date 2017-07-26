@@ -7,6 +7,14 @@ import { DEFAULT_ROOT_PATH, hasChildNodes, getExpandedPaths } from './pathUtils'
 
 class ConnectedTreeNode extends Component {
 
+  constructor(props) {
+    super(props);
+
+    // Keep this as a non-state variable because we don't want to trigger re-renders
+    this.userClicked = false;
+  }
+
+
   shouldComponentUpdate(nextProps) {
     let keys = Object.keys(nextProps.expandedPaths);
 
@@ -39,10 +47,15 @@ class ConnectedTreeNode extends Component {
     }
   }
 
+  componentDidMount () {
+    this.userClicked = false;
+  }
+
   handleClick(path) {
     const { expandedPaths } = this.props;
     const expanded = !!expandedPaths[path];
 
+    this.userClicked = true;
     // We're in a current expanded state and the user just clicked to collapse us
     if (expanded && this.props.handleCollapse) {
       this.props.handleCollapse(path);
@@ -51,7 +64,6 @@ class ConnectedTreeNode extends Component {
     else if (!expanded && this.props.handleExpand) {
       this.props.handleExpand(path);
     }
-
   }
 
   renderChildNodes(parentData, parentPath) {
@@ -92,7 +104,7 @@ class ConnectedTreeNode extends Component {
     const { data, dataIterator, path, depth, expandedPaths } = this.props;
 
     const nodeHasChildNodes = hasChildNodes(data, dataIterator);
-    const expanded = !!expandedPaths[path];
+    const expanded = this.props.shouldExpand && !this.userClicked ? this.props.shouldExpand(this.props) : !!expandedPaths[path];
 
     const { nodeRenderer } = this.props;
 
@@ -125,6 +137,7 @@ ConnectedTreeNode.propTypes = {
   expanded: PropTypes.bool,
 
   nodeRenderer: PropTypes.func,
+  shouldExpand: PropTypes.func
 };
 
 class TreeView extends Component {
