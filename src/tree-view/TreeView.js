@@ -43,7 +43,7 @@ class ConnectedTreeNode extends Component {
     // we changed dimensions
     if (expanded !== previouslyExpanded) {
       if (this.props.onToggle)
-        this.props.onToggle();
+        this.props.onToggle(this.props.path);
     }
   }
 
@@ -76,6 +76,7 @@ class ConnectedTreeNode extends Component {
         handleCollapse,
         handleExpand,
         expandedPaths,
+        controlledPaths,
         extraStuff,
         shouldComponentUpdate,
         shouldExpand
@@ -95,6 +96,7 @@ class ConnectedTreeNode extends Component {
           dataIterator={dataIterator}
           nodeRenderer={nodeRenderer}
           expandedPaths={expandedPaths}
+          controlledPaths={controlledPaths}
           // This should pass down the prop received from the object inspector
           onToggle={onToggle}
           handleCollapse={handleCollapse}
@@ -103,7 +105,7 @@ class ConnectedTreeNode extends Component {
           extraStuff={extraStuff}
           shouldExpand={shouldExpand}
           shouldComponentUpdate={shouldComponentUpdate}
-          
+
           {...props} // props for nodeRenderer
         />,
       );
@@ -112,10 +114,11 @@ class ConnectedTreeNode extends Component {
   }
 
   render() {
-    const { data, dataIterator, path, depth, expandedPaths } = this.props;
+    const { data, dataIterator, path, depth, expandedPaths, controlledPaths } = this.props;
 
     const nodeHasChildNodes = hasChildNodes(data, dataIterator);
-    const expanded = this.props.shouldExpand && !this.userClicked ? this.props.shouldExpand(this.props) : !!expandedPaths[path];
+    const controlled = !!controlledPaths[path];
+    const expanded = this.props.shouldExpand && !controlled ? this.props.shouldExpand(this.props) : !!expandedPaths[path];
 
     const { nodeRenderer } = this.props;
 
@@ -178,12 +181,14 @@ class TreeView extends Component {
       dataIterator,
       expandPaths,
       expandLevel,
+      controlPaths,
       nodeRenderer,
       handleExpand,
       handleCollapse,
       onToggle } = this.props;
 
     let expandedPaths = getExpandedPaths(data, dataIterator, expandPaths, expandLevel);
+    let controlledPaths = getExpandedPaths(data, dataIterator, controlPaths, 0);
 
     const rootPath = DEFAULT_ROOT_PATH;
 
@@ -195,6 +200,7 @@ class TreeView extends Component {
         depth={0}
         path={rootPath}
         expandedPaths={expandedPaths}
+        controlledPaths={controlledPaths}
         nodeRenderer={nodeRenderer}
         handleExpand={handleExpand}
         handleCollapse={handleCollapse}
