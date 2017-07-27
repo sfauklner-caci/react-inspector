@@ -13,10 +13,11 @@ class TreeNode extends Component {
      * @param {Object} prevProps
      */
   componentDidUpdate(prevProps) {
-    if (this.props.children.length !== prevProps.children.length) {
-      if (this.props.toggle)
-        this.props.toggle();
-    }
+    if (this.props.children && prevProps.children)
+      if (React.Children.count(this.props.children) !== React.Children.count(prevProps.children)) {
+        if (this.props.toggle)
+          this.props.toggle();
+      }
   }
 
   render() {
