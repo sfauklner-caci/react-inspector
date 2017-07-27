@@ -47,10 +47,6 @@ class ConnectedTreeNode extends Component {
     }
   }
 
-  componentDidMount () {
-    this.userClicked = false;
-  }
-
   handleClick(path) {
     const { expandedPaths } = this.props;
     const expanded = !!expandedPaths[path];
@@ -141,7 +137,6 @@ class ConnectedTreeNode extends Component {
         shouldShowPlaceholder={depth > 0}
         // Render a node from name and data (or possibly other props like isNonenumerable)
         nodeRenderer={nodeRenderer}
-
         {...this.props}
       >
         {// only render if the node is expanded

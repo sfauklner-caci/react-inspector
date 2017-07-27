@@ -7,6 +7,18 @@ const Arrow = ({ expanded, styles }) =>
   <span style={{ ...styles.base, ...(expanded ? styles.expanded : styles.collapsed) }}>▶</span>;
 
 class TreeNode extends Component {
+    /**
+     * React lifecycle method. Used to detect when our parent has filtered our children from out beneath
+     * us!
+     * @param {Object} prevProps
+     */
+  componentDidUpdate(prevProps) {
+    if (this.props.children.length !== prevProps.children.length) {
+      if (this.props.toggle)
+        this.props.toggle();
+    }
+  }
+
   render() {
     const {
       name,
