@@ -74,19 +74,23 @@ class ConnectedTreeNode extends Component {
 
     const {
       nodeRenderer,
-        onToggle,
-        handleClick,
-        handleCollapse,
-        handleExpand,
-        expandedPaths,
-        controlledPaths,
-        extraStuff,
-        shouldComponentUpdate,
-        shouldExpand
+      onToggle,
+      handleClick,
+      handleCollapse,
+      handleExpand,
+      expandedPaths,
+      controlledPaths,
+      extraStuff,
+      shouldComponentUpdate,
+      shouldExpand,
+      filter
     } = this.props;
 
     let childNodes = [];
     for (let { name, data, ...props } of dataIterator(parentData)) {
+      if (filter && !filter(name, data, extraStuff)) {
+        continue;
+      }
       const key = name;
       const path = `${parentPath}.${key}`;
       childNodes.push(
@@ -109,6 +113,7 @@ class ConnectedTreeNode extends Component {
           extraStuff={extraStuff}
           shouldExpand={shouldExpand}
           shouldComponentUpdate={shouldComponentUpdate}
+          filter={filter}
 
           {...props} // props for nodeRenderer
         />,
@@ -190,7 +195,9 @@ class TreeView extends Component {
       handleExpand,
       handleCollapse,
       handleClick,
-      onToggle } = this.props;
+      onToggle,
+      filter
+    } = this.props;
 
     let expandedPaths = getExpandedPaths(data, dataIterator, expandPaths, expandLevel);
     let controlledPaths = getExpandedPaths(data, dataIterator, controlPaths, 0);
@@ -211,6 +218,7 @@ class TreeView extends Component {
         handleCollapse={handleCollapse}
         handleClick={handleClick}
         onToggle={onToggle}
+        filter={filter}
         {...this.props}
       />
     );
