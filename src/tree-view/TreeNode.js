@@ -15,8 +15,8 @@ class TreeNode extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.children && prevProps.children)
       if (React.Children.count(this.props.children) !== React.Children.count(prevProps.children)) {
-        if (this.props.toggle)
-          this.props.toggle();
+        if (this.props.onToggle)
+          this.props.onToggle();
       }
   }
 
