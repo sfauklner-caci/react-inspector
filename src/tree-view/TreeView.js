@@ -53,7 +53,7 @@ class ConnectedTreeNode extends Component {
         this.props.onToggle(this.props.path);
     }
 
-    this.expanded = previouslyExpanded;
+    this.expanded = expanded;
   }
 
   /**
