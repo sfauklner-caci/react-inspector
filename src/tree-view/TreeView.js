@@ -31,20 +31,37 @@ class ConnectedTreeNode extends Component {
     return nextProps.data !== this.props.data || nextProps.name !== this.props.name;
   }
 
+  getExpanded() {
+    let { path, controlledPaths, expandedPaths } = this.props;
+    let controlled = !!controlledPaths[path];
+    let expanded = this.props.shouldExpand && !controlled ? this.props.shouldExpand(this.props) : !!expandedPaths[path];
+
+    return expanded;
+  }
+
   /**
    * React lifecycle method to determine if this component has changed dimensions
    * @param prevProps
    */
   componentDidUpdate(prevProps) {
-    const previouslyExpandedPaths = prevProps.expandedPaths;
-    const previouslyExpanded = !!previouslyExpandedPaths[prevProps.path];
-    const { expandedPaths } = this.props;
-    const expanded = !!expandedPaths[this.props.path];
+    const previouslyExpanded = this.expanded;
+    const expanded = this.getExpanded();
+
     // we changed dimensions
     if (expanded !== previouslyExpanded) {
       if (this.props.onToggle)
         this.props.onToggle(this.props.path);
     }
+
+    this.expanded = previouslyExpanded;
+  }
+
+  /**
+   * react lifecycle method used because it sets up some local variables that aren't included in state and will be
+   * needed in future 'componentDidUpdates'
+   */
+  componentDidMount() {
+    this.expanded = this.getExpanded();
   }
 
   handleClick(path) {
@@ -119,11 +136,10 @@ class ConnectedTreeNode extends Component {
   }
 
   render() {
-    const { data, dataIterator, path, depth, expandedPaths, controlledPaths } = this.props;
+    const { data, dataIterator, path, depth } = this.props;
 
     const nodeHasChildNodes = hasChildNodes(data, dataIterator);
-    const controlled = !!controlledPaths[path];
-    const expanded = this.props.shouldExpand && !controlled ? this.props.shouldExpand(this.props) : !!expandedPaths[path];
+    const expanded = this.getExpanded();
 
     const { nodeRenderer } = this.props;
 
